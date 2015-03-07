@@ -1,0 +1,51 @@
+#!/bin/bash
+USER=$1
+COMMAND=("${@:2}")
+if [ -z "$USER" ] || [ -z "$COMMAND" ]
+then
+        echo 'Not enough parameters:'
+        echo 'sudo-x user command...'
+        exit 1
+fi
+
+function exitWithErrorMessage
+{
+	echo $1
+	exit 1
+}
+
+TMP_FOLDER=/dev/shm
+
+LOCK_FOLDER=$TMP_FOLDER/xhost-locks.$LOGNAME.$USER/
+if [ ! -d "$LOCK_FOLDER" ]
+then
+	mkdir "$LOCK_FOLDER" || exitWithErrorMessage "Error: Could not create lock folder"
+fi
+
+INSTANCE_LOCK_FILE="$LOCK_FOLDER/$$"
+
+function isLockFolderEmpty
+{
+	DIR_LISTING=$(ls "$LOCK_FOLDER")
+	if [ -z "$DIR_LISTING" ]
+	then
+		return 0
+	else
+		return 1
+	fi
+}
+
+if isLockFolderEmpty
+then
+	xhost +SI:localuser:$USER
+fi
+touch "$INSTANCE_LOCK_FILE" || exitWithErrorMessage "Error: Could not create lock file"
+
+sudo -u "$USER" "${COMMAND[@]}"
+
+rm "$INSTANCE_LOCK_FILE"
+if isLockFolderEmpty
+then
+	xhost -SI:localuser:$USER
+	rmdir $LOCK_FOLDER
+fi

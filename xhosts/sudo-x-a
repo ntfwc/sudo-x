@@ -1,0 +1,12 @@
+#!/bin/bash
+USER=$1
+COMMAND=$2
+if [ -z "$USER" ] || [ -z "$COMMAND" ]
+then
+        echo 'Not enough parameters:'
+        echo 'sudo-x-a user command...'
+        exit 1
+fi
+
+export PULSE_SERVER=localhost
+sudo-x "$@"
