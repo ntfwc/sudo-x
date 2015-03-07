@@ -16,7 +16,7 @@ function exitWithErrorMessage
 
 TMP_FOLDER=/dev/shm
 
-LOCK_FOLDER=$TMP_FOLDER/xhost-locks.$LOGNAME.$USER/
+LOCK_FOLDER=$TMP_FOLDER/xhost-locks.$(whoami).$USER/
 if [ ! -d "$LOCK_FOLDER" ]
 then
 	mkdir "$LOCK_FOLDER" || exitWithErrorMessage "Error: Could not create lock folder"
