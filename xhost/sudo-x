@@ -4,7 +4,7 @@ COMMAND=("${@:2}")
 if [ -z "$USER" ] || [ -z "$COMMAND" ]
 then
         echo 'Not enough parameters:'
-        echo 'sudo-x user command...'
+        echo 'sudo-x user command [command parameters]'
         exit 1
 fi
 
