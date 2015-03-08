@@ -4,7 +4,7 @@ sudo-x is a script for easily opening a graphical application as a different (us
 sudo-x-a adds in audio support. Currently this is PulseAudio only, accomplished by simply pointing PulseAudio towards localhost as the server.
 
 ##Rational
-Linux user accounts are a powerful method for restricting software to minimum priviledge. It is fairly easy to utilize other user accounts for non-graphical programs such as servers, but when it comes to graphical applications it isn't obvious, except if the target user is root. And using a user account incurs minimal performance impact, which is important for software such as web browsers and video games.
+Linux user accounts are a powerful method for restricting software to minimum priviledge. It is fairly easy to utilize other user accounts for non-graphical programs such as servers, but when it comes to graphical applications it isn't obvious, except if the target user is root. And using a separate user account incurs minimal performance impact, which is important for software such as web browsers and video games.
 
 ##Security Considerations
 X11 access still grants a fair bit of priviledges to a program. For example, it can hear your keypresses, read your clipboard, and watch your screen. And, of course, user account protections will fail in the event of a priviledge escalation.
@@ -110,7 +110,7 @@ So let's set up our two users, (which should both need video acceleration):
 		sudo useradd -r -m game-jail
 		sudo adduser ntfwc game-jail
 		sudo adduser game-jail video
-		sudo adduser -r -m game-jail-n
+		sudo useradd -r -m game-jail-n
 		sudo adduser ntfwc game-jail-n
 		sudo adduser game-jail-n video
 		sudo visudo -f /etc/sudoers.d/game-jail-rules
