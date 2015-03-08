@@ -3,6 +3,12 @@ sudo-x is a script for easily opening a graphical application as a different (us
 
 sudo-x-a adds in audio support. Currently this is PulseAudio only, accomplished by simply pointing PulseAudio towards localhost as the server.
 
+##Usage
+
+>sudo-x user command [command parameters]
+
+>sudo-x-a user command [command parameters]
+
 ##Rational
 Linux user accounts are a powerful method for restricting software to minimum priviledge. It is fairly easy to utilize other user accounts for non-graphical programs such as servers, but when it comes to graphical applications it isn't obvious, except if the target user is root. And using a separate user account incurs minimal performance impact, which is important for software such as web browsers and video games.
 
