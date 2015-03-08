@@ -17,7 +17,7 @@ First you need a non-root user. You probably don't want this to be a login user,
 
 >useradd -r -m [sub-user]
 
-Now that we have a sub-user, we should give ourselves access to it. Usually this means removing password requirements in sudo for that user and adding ourselves its group. 
+Now that we have a sub-user, we should give ourselves access to it. Usually this means removing password requirements in sudo for that user and adding ourselves to its group. 
 Note: Being added to a new group won't take effect until your next log-in, so you may wish to log out and back in afterwards.
 
 >adduser [me] [sub-user]
@@ -26,14 +26,14 @@ Note: Being added to a new group won't take effect until your next log-in, so yo
 
 			[me] ALL=([sub-user]) NOPASSWD: ALL
 
-Now, once you have a sudo-x script, make sure the TMP_FOLDER is set to your liking in it. This folder will be used for locks. By default this is /dev/shm, which is usually an in-memory folder. Use chmod +x on the script and let's try opening a text editor like leafpad:
+Now, once you have a sudo-x script, make sure the TMP_FOLDER variable in it is set to your liking. This folder will be used for locks. By default this is /dev/shm, which is usually an in-memory folder. Use chmod +x on the script and let's try opening a text editor like leafpad:
 
 >[Path/To/Script]/sudo-x [sub-user] [editor]
 
 Make sure to try the other version if this doesn't work. If your chosen editor pops up, you are good to go. And if you try opening a file from the editor, you should see you are restricted to what the user has access to. You can then install the script somewhere in your path, usually in /usr/local/bin/
 
 ##Audio
-Currently this requires PulseAudio. You have to enable local network access on your desktop PulseAudio server. I suggest you use paprefs for this task. With paprefs, you just open the application, go to the Network Server tab, and tick the "Enable network access to local sound devices". Now, if you installed sudo-x correctly, sudo-x-a should be able to act the same, except with audio.
+Currently this requires PulseAudio. You have to enable local network access on your desktop PulseAudio server. I suggest you use paprefs for this task. With paprefs open, you simply go to the Network Server tab and tick the "Enable network access to local sound devices". Now, if sudo-x is correctly installed, sudo-x-a should be able to act the much the same, except with audio.
 
 ##Graphics Acceleration
 If the application you want to run requires graphics acceleration, you will need to add the user to a group that grants access to it, which is usually the video group.
@@ -82,7 +82,7 @@ Then try it out:
 
 		sudo-x-a browser firefox
 
-We should give ourselves the ability to move and delete files from the Download folder:
+After logging out and back in, We should give ourselves the ability to move and delete files from the Download folder:
 
 		cd /home/browser
 		sudo -u browser chgrp ntfwc Download
@@ -100,10 +100,10 @@ Then we can optionally package this in its own script, where we can apply memory
 
 		sudo-x-a browsers firefox "$@"
 
-And finally set it as the preferred application for web.
+And finally set it as the preferred application for web in the desktop environment.
 
 ##Video Games
-For this use, I would suggest having a user for each catagory of restriction. So, for example, we can make a user for offline games called "game-jail" and one for games that need internet access called "game-jail-n". You can also have dedicated users for particular game distribution platforms.
+For this use, I would suggest making user accounts for different catagories of restriction. So, for example, we can make a user for offline games called "game-jail" and one for games that need internet access called "game-jail-n". You can also have dedicated users for particular game distribution platforms.
 
 So let's set up our two users, (which should both need video acceleration):
 
@@ -118,7 +118,7 @@ So let's set up our two users, (which should both need video acceleration):
 			ntfwc ALL=(game-jail) NOPASSWD: ALL
 			ntfwc ALL=(game-jail-n) NOPASSWD: ALL
 
-Then we should apply network restrictions in our firewall (in this case ferm):
+Then we should apply network restrictions in our firewall (in this case, using ferm):
 
 		mod owner uid-owner game-jail
 		{
@@ -127,7 +127,7 @@ Then we should apply network restrictions in our firewall (in this case ferm):
 			REJECT;
 		}
 
-Now you should re-login and give yourself write access so you can create a folder in the user's home for games, which are not globally installed.
+Now we should re-login and give ourselves write access so we can create a folder in the user's home for games, which are not globally installed.
 
 		cd /home
 		sudo -u game-jail chmod g+w game-jail
@@ -137,7 +137,7 @@ Now you should re-login and give yourself write access so you can create a folde
 		mkdir game-jail-n/Games
 		chgrp game-jail-n game-jail-n/Games
 
-Make sure that, when you copy over a game, you change the group so it can be read by the user. For example, if you had a game in a folder called "AwesomeGame" in your home dir:
+Make sure that, when you copy over a game, you change the group so it can be read and executed by the user. For example, if you had a game in a folder called "AwesomeGame" in your home dir:
 
 		cd ~
 		mv AwesomeGame /home/game-jail/Games
