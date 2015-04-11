@@ -48,7 +48,7 @@ if [ ! -d "$LOCK_FOLDER" ]
 then
 	mkdir "$LOCK_FOLDER" || exitWithErrorMessage "Error: Could not create lock folder"
 else
-	cleanInactivePIDFiles "$LOCK_FOLDER" "$USER"
+	cleanInactivePIDFiles "$LOCK_FOLDER" $(whoami)
 fi
 
 INSTANCE_LOCK_FILE="$LOCK_FOLDER/$$"
