@@ -8,10 +8,37 @@ then
         exit 1
 fi
 
-function exitWithErrorMessage
+exitWithErrorMessage()
 {
 	echo $1
 	exit 1
+}
+
+doesFileBelongToUser()
+{
+	FILE=$1
+	USER=$2
+	FILE_OWNER=$(stat -c %U "$FILE")
+	if [ "$FILE_OWNER" == "$USER" ]
+	then
+		return 0
+	else
+		return 1
+	fi
+}
+
+cleanInactivePIDFiles()
+{
+	LOCK_FOLDER=$1
+	USER=$2
+	for pid in $(ls "$LOCK_FOLDER")
+	do
+		PROC_DIR="/proc/$pid"
+		if [ ! -d "$PROC_DIR" ] || ! doesFileBelongToUser "$PROC_DIR" "$USER"
+		then
+			rm "$LOCK_FOLDER/$pid"
+		fi
+	done
 }
 
 TMP_FOLDER=/dev/shm
@@ -20,11 +47,13 @@ LOCK_FOLDER=$TMP_FOLDER/xhost-locks.$(whoami).$USER/
 if [ ! -d "$LOCK_FOLDER" ]
 then
 	mkdir "$LOCK_FOLDER" || exitWithErrorMessage "Error: Could not create lock folder"
+else
+	cleanInactivePIDFiles "$LOCK_FOLDER" "$USER"
 fi
 
 INSTANCE_LOCK_FILE="$LOCK_FOLDER/$$"
 
-function isLockFolderEmpty
+isLockFolderEmpty()
 {
 	DIR_LISTING=$(ls "$LOCK_FOLDER")
 	if [ -z "$DIR_LISTING" ]
