@@ -16,9 +16,9 @@ exitWithErrorMessage()
 
 doesFileBelongToUser()
 {
-	FILE=$1
-	USER=$2
-	FILE_OWNER=$(stat -c %U "$FILE")
+	local FILE=$1
+	local USER=$2
+	local FILE_OWNER=$(stat -c %U "$FILE")
 	if [ "$FILE_OWNER" == "$USER" ]
 	then
 		return 0
@@ -29,11 +29,11 @@ doesFileBelongToUser()
 
 cleanInactivePIDFiles()
 {
-	LOCK_FOLDER=$1
-	USER=$2
+	local LOCK_FOLDER=$1
+	local USER=$2
 	for pid in $(ls "$LOCK_FOLDER")
 	do
-		PROC_DIR="/proc/$pid"
+		local PROC_DIR="/proc/$pid"
 		if [ ! -d "$PROC_DIR" ] || ! doesFileBelongToUser "$PROC_DIR" "$USER"
 		then
 			rm "$LOCK_FOLDER/$pid"
@@ -55,7 +55,7 @@ INSTANCE_LOCK_FILE="$LOCK_FOLDER/$$"
 
 isLockFolderEmpty()
 {
-	DIR_LISTING=$(ls "$LOCK_FOLDER")
+	local DIR_LISTING=$(ls "$LOCK_FOLDER")
 	if [ -z "$DIR_LISTING" ]
 	then
 		return 0
