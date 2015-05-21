@@ -48,15 +48,15 @@ If the application you want to run requires graphics acceleration, you will need
 
 ##Security Improvements
 ###File Access
-By default the umask for file access can be rather permissive. Usually this allows other users to read your files, but not write over them. This might be fine, but you may prefer that these sub-users cannot see any of your files. You can change the umask to 0007 so by default files are created without any permissions for other users. And you can take away these permissions on existing files with chmod o-rwx [files] and chmod -R o-rwx [folders].
+By default the umask for file access can be rather permissive. Usually this allows other users to read your files, but not write over them. This might be fine, but you may prefer that these sub-users cannot see any of your files. You can change the umask to 0007 so by default files are created without any permissions for other users. And you can take away these permissions on existing files with chmod o-rwx [files] and chmod -R o-rwx [folders]. It is also sufficient to do chmod o-rwx [folder] (no recursion) with a top-level folder, like your home directory.
 
 ###Setuid Programs
-setuid programs are run as the owner, which is usually root. This also includes programs like su and pkexec, which, like sudo, allow you to change users. This is something only root can do. These user changing tools, in particular, are something you should consider restricting access to, since priviledge escalation is just a password away, and, as mentioned above, open X11 applications can hear your key presses. You can accomplish this by changing the groups of these program files to one like sudo or admin and then making the permissions more restrictive. You probably won't do this with sudo as its use is restricted by its configuration files, which, by default, restrict it to certain groups.
+setuid programs are run as the owner, which is usually root. This also includes programs like su and pkexec, which, like sudo, allow you to change users. This is something only root can do. These user changing tools, in particular, are something you should consider restricting access to, since priviledge escalation could be just a password away, and, as mentioned above, open X11 applications can hear your key presses. You can accomplish this by changing the groups of these program files to one like sudo or admin and then making the permissions more restrictive. Use something like dpkg-statoverride if you can, so that the change will stick around if the file is updated.
 
 		>ls -l /bin | grep su
 		-rwsr-xr-x 1 root root su
-		>chgrp sudo su
-		>chmod o-rwx su
+		>sudo dpkg-statoverride --update --add root sudo 4750 /usr/bin/pkexec
+		>ls -l /bin | grep su
 		-rwsr-x--- 1 root sudo su
 	
 
