@@ -43,7 +43,7 @@ cleanInactivePIDFiles()
 
 TMP_FOLDER=/dev/shm
 
-LOCK_FOLDER=$TMP_FOLDER/xauth-locks.$(whoami).$USER/
+LOCK_FOLDER="$TMP_FOLDER/xauth-locks.$(whoami).$USER"
 if [ ! -d "$LOCK_FOLDER" ]
 then
 	mkdir "$LOCK_FOLDER" || exitWithErrorMessage "Error: Could not create lock folder"
@@ -72,7 +72,7 @@ then
 fi
 touch "$INSTANCE_LOCK_FILE" || exitWithErrorMessage "Error: Could not create lock file"
 
-sudo -H -u "$USER" "${COMMAND[@]}"
+sudo -Hu "$USER" "${COMMAND[@]}"
 
 rm "$INSTANCE_LOCK_FILE"
 if isLockFolderEmpty
