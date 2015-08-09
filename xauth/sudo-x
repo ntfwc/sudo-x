@@ -64,12 +64,16 @@ isLockFolderEmpty()
 	fi
 }
 
-SESSION_XAUTHORITY_FILE="$TMP_FOLDER/xauth-xauthority.$USER"
+SESSION_XAUTHORITY_DIR="$TMP_FOLDER/xauth-xauthority.$USER"
+SESSION_XAUTHORITY_FILE="$SESSION_XAUTHORITY_DIR/.Xauthority"
 if isLockFolderEmpty
 then
 	echo "Giving $USER xauth key"
 	XAUTH_KEY=$(xauth list | grep $(uname -n) | sed -n '1,1p' | cut -d ' ' -f 5)
+
+	sudo -u "$USER" mkdir "$SESSION_XAUTHORITY_DIR" 2>/dev/null
 	export XAUTHORITY="$SESSION_XAUTHORITY_FILE"
+
 	sudo -Hu "$USER" xauth add $DISPLAY . $XAUTH_KEY
 fi
 touch "$INSTANCE_LOCK_FILE" || exitWithErrorMessage "Error: Could not create lock file"
