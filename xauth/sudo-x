@@ -69,7 +69,7 @@ SESSION_XAUTHORITY_FILE="$SESSION_XAUTHORITY_DIR/.Xauthority"
 if isLockFolderEmpty
 then
 	echo "Giving $USER xauth key"
-	XAUTH_KEY=$(xauth list | grep $(uname -n) | sed -n '1,1p' | cut -d ' ' -f 5)
+	XAUTH_KEY=$(xauth list "$DISPLAY" | grep $(uname -n) | sed -n '1,1p' | cut -d ' ' -f 5)
 
 	sudo -u "$USER" mkdir "$SESSION_XAUTHORITY_DIR" 2>/dev/null
 	export XAUTHORITY="$SESSION_XAUTHORITY_FILE"
