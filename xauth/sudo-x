@@ -8,6 +8,7 @@ then
         exit 1
 fi
 
+#######################################
 exitWithErrorMessage()
 {
 	echo $1
@@ -40,6 +41,8 @@ cleanInactivePIDFiles()
 		fi
 	done
 }
+#######################################
+id -u "$USER" &> /dev/null || exitWithErrorMessage "Given user does not exist"
 
 TMP_FOLDER=/dev/shm
 
