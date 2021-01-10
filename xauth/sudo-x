@@ -49,7 +49,8 @@ TMP_FOLDER=/dev/shm
 LOCK_FOLDER="$TMP_FOLDER/xauth-locks.$(whoami).$USER"
 if [ ! -d "$LOCK_FOLDER" ]
 then
-	mkdir "$LOCK_FOLDER" || exitWithErrorMessage "Error: Could not create lock folder"
+	mkdir "$LOCK_FOLDER" 2>/dev/null 
+	[ -e "$LOCK_FOLDER" ] || exitWithErrorMessage "Error: Could not create lock folder"
 else
 	cleanInactivePIDFiles "$LOCK_FOLDER" $(whoami)
 fi
@@ -81,13 +82,17 @@ then
 fi
 touch "$INSTANCE_LOCK_FILE" || exitWithErrorMessage "Error: Could not create lock file"
 
+finish() {
+	rm "$INSTANCE_LOCK_FILE"
+	if isLockFolderEmpty
+	then
+		echo "Taking $USER xauth key"
+		sudo -Hu "$USER" xauth remove $DISPLAY
+		rmdir $LOCK_FOLDER
+	fi
+}
+trap finish EXIT
+
 export XAUTHORITY="$SESSION_XAUTHORITY_FILE"
 sudo -Hu "$USER" "${COMMAND[@]}"
 
-rm "$INSTANCE_LOCK_FILE"
-if isLockFolderEmpty
-then
-	echo "Taking $USER xauth key"
-	sudo -Hu "$USER" xauth remove $DISPLAY
-	rmdir $LOCK_FOLDER
-fi
